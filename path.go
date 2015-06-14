@@ -2,7 +2,7 @@
 package spacepath
 
 import (
-	"fmt"
+	"container/heap"
 	"math"
 )
 
@@ -42,18 +42,17 @@ func AStar(
 	heuristic func(Node, Node) float64,
 	success func(Node, Node) bool) []Node {
 	seen := make(map[Node]bool)
-	open := make(map[Node]float64)
+	openHeap := make(PriorityQueue, 0)
+	heap.Init(&openHeap)
 	cameFrom := make(map[Node]Node)
 	gScore := make(map[Node]float64)
 	fScore := make(map[Node]float64)
 	gScore[start] = 0
 	fScore[start] = gScore[start] + heuristic(start, goal)
-	open[start] = fScore[start]
+	heap.Push(&openHeap, &Item{value: start, priority: fScore[start]})
 	seen[start] = true
 	for {
-		node := min(open)
-		delete(open, node)
-		fmt.Printf("node: %+v\n", node)
+		node := heap.Pop(&openHeap).(*Item).value
 		if success(node, goal) {
 			return reconstructPath(cameFrom, node)
 		}
@@ -67,7 +66,7 @@ func AStar(
 			gScore[adj] = gScore[node] + 1
 			hScore := heuristic(adj, goal)
 			fScore[adj] = gScore[adj] + hScore
-			open[adj] = fScore[adj]
+			heap.Push(&openHeap, &Item{value: adj, priority: fScore[adj]})
 		}
 	}
 }

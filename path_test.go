@@ -26,12 +26,24 @@ func nodeEqual(Node Node, goal Node) bool {
 
 func TestAStar(t *testing.T) {
 	start := Node{x: 0, y: 0, vx: 0, vy: 0, angle: 0}
-	goal := Node{x: 4, y: 4, vx: 0, vy: 0, angle: 0}
+	goal := Node{x: 8, y: 8, vx: 0, vy: 0, angle: 0}
 	adjacent := manhattan
 	heuristic := euclideanDistance
 	success := nodeEqual
 	path := AStar(start, goal, adjacent, heuristic, success)
-	if len(path) != 9 {
-		t.Errorf("Expected length 9, was length %d.", len(path))
+	if len(path) != 17 {
+		t.Errorf("Expected length 17, was length %d.", len(path))
+	}
+}
+
+func BenchmarkAStar(b *testing.B) {
+	start := Node{x: 0, y: 0, vx: 0, vy: 0, angle: 0}
+	goal := Node{x: 8, y: 8, vx: 0, vy: 0, angle: 0}
+	adjacent := manhattan
+	heuristic := euclideanDistance
+	success := nodeEqual
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		AStar(start, goal, adjacent, heuristic, success)
 	}
 }
