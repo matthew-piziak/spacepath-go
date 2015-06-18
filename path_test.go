@@ -20,8 +20,8 @@ func euclideanDistance(Node Node, goal Node) float64 {
 			math.Pow(float64(goal.y)-float64(Node.y), 2))
 }
 
-func nodeEqual(Node Node, goal Node) bool {
-	return Node == goal
+func nodeEqual(node Node, goal Node) bool {
+	return node == goal
 }
 
 func TestAStar(t *testing.T) {

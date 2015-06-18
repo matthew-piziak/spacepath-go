@@ -3,7 +3,6 @@ package spacepath
 
 import (
 	"container/heap"
-	"math"
 )
 
 type Node struct {
@@ -12,18 +11,6 @@ type Node struct {
 	vx    int8
 	vy    int8
 	angle uint8
-}
-
-func min(open map[Node]float64) Node {
-	waterline := math.Inf(1)
-	best := Node{x: 0, y: 0, vx: 0, vy: 0, angle: 0}
-	for k, v := range open {
-		if v < waterline {
-			waterline = v
-			best = k
-		}
-	}
-	return best
 }
 
 func reconstructPath(cameFrom map[Node]Node, node Node) []Node {
@@ -49,10 +36,10 @@ func AStar(
 	fScore := make(map[Node]float64)
 	gScore[start] = 0
 	fScore[start] = gScore[start] + heuristic(start, goal)
-	heap.Push(&openHeap, &Item{value: start, priority: fScore[start]})
+	heap.Push(&openHeap, &Item{node: start, priority: fScore[start]})
 	seen[start] = true
 	for {
-		node := heap.Pop(&openHeap).(*Item).value
+		node := heap.Pop(&openHeap).(*Item).node
 		if success(node, goal) {
 			return reconstructPath(cameFrom, node)
 		}
@@ -66,7 +53,7 @@ func AStar(
 			gScore[adj] = gScore[node] + 1
 			hScore := heuristic(adj, goal)
 			fScore[adj] = gScore[adj] + hScore
-			heap.Push(&openHeap, &Item{value: adj, priority: fScore[adj]})
+			heap.Push(&openHeap, &Item{node: adj, priority: fScore[adj]})
 		}
 	}
 }

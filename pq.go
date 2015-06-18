@@ -1,18 +1,12 @@
 // Priority queue
 package spacepath
 
-import (
-	"container/heap"
-)
-
-// An Item is something we manage in a priority queue.
 type Item struct {
-	value    Node
+	node     Node
 	priority float64
 	index    int
 }
 
-// A PriorityQueue implements heap.Interface and holds Items.
 type PriorityQueue []*Item
 
 func (pq PriorityQueue) Len() int { return len(pq) }
@@ -41,11 +35,4 @@ func (pq *PriorityQueue) Pop() interface{} {
 	item.index = -1 // for safety
 	*pq = old[0 : n-1]
 	return item
-}
-
-// update modifies the priority and value of an Item in the queue.
-func (pq *PriorityQueue) update(item *Item, value Node, priority float64) {
-	item.value = value
-	item.priority = priority
-	heap.Fix(pq, item.index)
 }
