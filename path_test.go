@@ -5,12 +5,24 @@ import (
 	"testing"
 )
 
-func manhattan(node Node) []Node {
-	adjacencyList := []Node{
-		Node{node.x + 1, node.y, node.vx, node.vy, node.angle},
-		Node{node.x - 1, node.y, node.vx, node.vy, node.angle},
-		Node{node.x, node.y + 1, node.vx, node.vy, node.angle},
-		Node{node.x, node.y - 1, node.vx, node.vy, node.angle}}
+func manhattan(node Node) []Edge {
+	adjacencyList := []Edge{
+		Edge{
+			dest:   Node{node.x + 1, node.y, node.vx, node.vy, node.angle},
+			action: "right",
+		},
+		Edge{
+			dest:   Node{node.x - 1, node.y, node.vx, node.vy, node.angle},
+			action: "left",
+		},
+		Edge{
+			dest:   Node{node.x, node.y + 1, node.vx, node.vy, node.angle},
+			action: "up",
+		},
+		Edge{
+			dest:   Node{node.x, node.y - 1, node.vx, node.vy, node.angle},
+			action: "down",
+		}}
 	return adjacencyList
 }
 
@@ -26,13 +38,17 @@ func nodeEqual(node Node, goal Node) bool {
 
 func TestAStar(t *testing.T) {
 	start := Node{x: 0, y: 0, vx: 0, vy: 0, angle: 0}
-	goal := Node{x: 8, y: 8, vx: 0, vy: 0, angle: 0}
+	goal := Node{x: 4, y: 4, vx: 0, vy: 0, angle: 0}
 	adjacent := manhattan
 	heuristic := euclideanDistance
 	success := nodeEqual
 	path := AStar(start, goal, adjacent, heuristic, success)
-	if len(path) != 17 {
-		t.Errorf("Expected length 17, was length %d.", len(path))
+	expectedLength := 8
+	if len(path) != expectedLength {
+		t.Errorf(
+			"Expected length %d, was length %d.",
+			expectedLength,
+			len(path))
 	}
 }
 
