@@ -21,19 +21,19 @@ const (
 func (node GridNode) Neighbors() []Edge {
 	return []Edge{
 		Edge{
-			dest:   GridNode{node.x + 1, node.y},
+			dest:   GridNode{x: node.x + 1, y: node.y},
 			action: "right",
 		},
 		Edge{
-			dest:   GridNode{node.x - 1, node.y},
+			dest:   GridNode{x: node.x - 1, y: node.y},
 			action: "left",
 		},
 		Edge{
-			dest:   GridNode{node.x, node.y + 1},
+			dest:   GridNode{x: node.x, y: node.y + 1},
 			action: "up",
 		},
 		Edge{
-			dest:   GridNode{node.x, node.y - 1},
+			dest:   GridNode{x: node.x, y: node.y - 1},
 			action: "down",
 		}}
 }
