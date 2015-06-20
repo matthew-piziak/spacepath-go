@@ -1,4 +1,3 @@
-// Generalized pathing functions
 package spacepath
 
 import (
@@ -18,14 +17,6 @@ type Edge struct {
 	action Action
 }
 
-func reconstructPath(cameFrom map[Node]Edge, node Node) []Action {
-	if edge, ok := cameFrom[node]; ok {
-		return append(reconstructPath(cameFrom, edge.dest), edge.action)
-	}
-	return make([]Action, 0)
-}
-
-// A* pathing algorithm
 func AStar(start Node, goal Node) []Action {
 	seen := make(map[Node]bool)
 	openHeap := make(PriorityQueue, 0)
@@ -51,11 +42,18 @@ func AStar(start Node, goal Node) []Action {
 			seen[adj] = true
 			// reverse the edge for reconstruction
 			cameFrom[adj] = Edge{dest: node, action: action}
-			// adjacency is based on a constant time step
+			// adjacency cost is based on a constant step
 			gScore[adj] = gScore[node] + 1
 			hScore := adj.Heuristic(goal)
 			fScore[adj] = gScore[adj] + hScore
 			heap.Push(&openHeap, &Item{node: adj, priority: fScore[adj]})
 		}
 	}
+}
+
+func reconstructPath(cameFrom map[Node]Edge, node Node) []Action {
+	if edge, ok := cameFrom[node]; ok {
+		return append(reconstructPath(cameFrom, edge.dest), edge.action)
+	}
+	return make([]Action, 0)
 }

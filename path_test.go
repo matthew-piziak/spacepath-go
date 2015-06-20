@@ -17,6 +17,7 @@ const (
 	RIGHT Action = "right"
 )
 
+// orthogonal movement
 func (node GridNode) Neighbors() []Edge {
 	return []Edge{
 		Edge{
@@ -37,11 +38,11 @@ func (node GridNode) Neighbors() []Edge {
 		}}
 }
 
+// euclidean norm
 func (node GridNode) Heuristic(goal Node) float64 {
 	gridGoal := goal.(GridNode)
-	return math.Sqrt(
-		math.Pow(float64(gridGoal.x)-float64(node.x), 2) +
-			math.Pow(float64(gridGoal.y)-float64(node.y), 2))
+	return math.Sqrt(math.Pow(float64(gridGoal.x)-float64(node.x), 2) +
+		math.Pow(float64(gridGoal.y)-float64(node.y), 2))
 }
 
 func (node GridNode) Success(goal Node) bool {
@@ -58,14 +59,5 @@ func TestAStar(t *testing.T) {
 			"Expected length %d, was length %d.",
 			expectedLength,
 			len(path))
-	}
-}
-
-func BenchmarkAStar(b *testing.B) {
-	start := GridNode{x: 0, y: 0}
-	goal := GridNode{x: 4, y: 4}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		AStar(start, goal)
 	}
 }
