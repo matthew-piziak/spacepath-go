@@ -104,8 +104,17 @@ func (node NewtNode) Heuristic(goal Node) float64 {
 	if leavingArena(node, 120, 120) {
 		return hMax
 	}
-	hx := (-float64(node.vx) + math.Sqrt((2 * math.Pow(float64(node.vx), 2))) + (float64(4*ACCELERATION) * math.Abs(float64(newtGoal.x-node.x)))) / 2
-	hy := (-float64(node.vy) + math.Sqrt((2 * math.Pow(float64(node.vy), 2))) + (float64(4*ACCELERATION) * math.Abs(float64(newtGoal.y-node.y)))) / 2
+	hx := ((-1 * float64(node.vx)) +
+		(-1 * float64(2*newtGoal.vx)) +
+		math.Sqrt(
+			(7*math.Pow(float64(newtGoal.vx), 2))+
+				(2*math.Pow(float64(node.vx), 2))) +
+		(8 * math.Abs(float64(newtGoal.x-node.x)))) / 2
+	hy := ((-1 * float64(node.vy)) +
+		(-1 * float64(node.vy)) +
+		math.Sqrt((7*math.Pow(float64(newtGoal.vx), 2))+
+			(2*math.Pow(float64(node.vy), 2))) +
+		(8 * math.Abs(float64(newtGoal.y-node.y)))) / 2
 	return 1.02 * (hx + hy)
 }
 
@@ -164,7 +173,8 @@ func TestNewt(t *testing.T) {
 	start := NewtNode{x: 0, y: 0, vx: 0, vy: 0, angle: 1}
 	goal := NewtNode{x: 100, y: 100, vx: 0, vy: 0, angle: 0}
 	path := AStar(start, goal)
-	for i, path := range path {
-		fmt.Printf("%d: %s\n", i, path)
+	for _, path := range path {
+		fmt.Printf("%+v\n", path)
 	}
+	fmt.Println(len(path))
 }

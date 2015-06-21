@@ -41,8 +41,7 @@ func (node GridNode) Neighbors() []Edge {
 // euclidean norm
 func (node GridNode) Heuristic(goal Node) float64 {
 	gridGoal := goal.(GridNode)
-	return math.Sqrt(math.Pow(float64(gridGoal.x)-float64(node.x), 2) +
-		math.Pow(float64(gridGoal.y)-float64(node.y), 2))
+	return math.Hypot(float64(gridGoal.x-node.x), float64(gridGoal.y-node.y))
 }
 
 func (node GridNode) Success(goal Node) bool {

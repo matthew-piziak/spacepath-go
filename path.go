@@ -2,7 +2,6 @@ package spacepath
 
 import (
 	"container/heap"
-	"fmt"
 )
 
 type Node interface {
@@ -16,9 +15,10 @@ type Action string
 type Edge struct {
 	dest   Node
 	action Action
+	score  float64
 }
 
-func AStar(start Node, goal Node) []Action {
+func AStar(start Node, goal Node) []Edge {
 	seen := make(map[Node]bool)
 	openHeap := make(PriorityQueue, 0)
 	heap.Init(&openHeap)
@@ -30,10 +30,7 @@ func AStar(start Node, goal Node) []Action {
 	heap.Push(&openHeap, &Item{node: start, priority: fScore[start]})
 	seen[start] = true
 	for {
-		pop := heap.Pop(&openHeap).(*Item)
-		node := pop.node
-		h := pop.priority
-		fmt.Printf("node: %v h: %f\n", node, h)
+		node := heap.Pop(&openHeap).(*Item).node
 		if node.Success(goal) {
 			return reconstructPath(cameFrom, node)
 		}
@@ -44,20 +41,24 @@ func AStar(start Node, goal Node) []Action {
 				continue
 			}
 			seen[adj] = true
-			// reverse the edge for reconstruction
-			cameFrom[adj] = Edge{dest: node, action: action}
 			// adjacency cost is based on a constant step
 			gScore[adj] = gScore[node] + 1
 			hScore := adj.Heuristic(goal)
 			fScore[adj] = gScore[adj] + hScore
 			heap.Push(&openHeap, &Item{node: adj, priority: fScore[adj]})
+			// reverse the edge for reconstruction
+			cameFrom[adj] = Edge{
+				dest:   node,
+				action: action,
+				score:  fScore[adj],
+			}
 		}
 	}
 }
 
-func reconstructPath(cameFrom map[Node]Edge, node Node) []Action {
+func reconstructPath(cameFrom map[Node]Edge, node Node) []Edge {
 	if edge, ok := cameFrom[node]; ok {
-		return append(reconstructPath(cameFrom, edge.dest), edge.action)
+		return append(reconstructPath(cameFrom, edge.dest), edge)
 	}
-	return make([]Action, 0)
+	return make([]Edge, 0)
 }
