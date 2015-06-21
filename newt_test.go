@@ -98,10 +98,10 @@ func (node NewtNode) Neighbors() []Edge {
 func (node NewtNode) Heuristic(goal Node) float64 {
 	newtGoal := goal.(NewtNode)
 	hMax := math.MaxFloat64
-	if outsideArena(node, 50, 50) {
+	if outsideArena(node, 120, 120) {
 		return hMax
 	}
-	if leavingArena(node, 50, 50) {
+	if leavingArena(node, 120, 120) {
 		return hMax
 	}
 	hx := (-float64(node.vx) + math.Sqrt((2 * math.Pow(float64(node.vx), 2))) + (float64(4*ACCELERATION) * math.Abs(float64(newtGoal.x-node.x)))) / 2
@@ -120,12 +120,12 @@ func (node NewtNode) Success(goal Node) bool {
 
 func outsideArena(node NewtNode, boundX int16, boundY int16) bool {
 	if node.x < 0 || node.y < 0 {
-		return false
+		return true
 	}
 	if node.x > boundX || node.y > boundY {
-		return false
+		return true
 	}
-	return true
+	return false
 }
 
 func leavingArena(node NewtNode, boundX int16, boundY int16) bool {
@@ -162,7 +162,7 @@ func leavingArena(node NewtNode, boundX int16, boundY int16) bool {
 
 func TestNewt(t *testing.T) {
 	start := NewtNode{x: 0, y: 0, vx: 0, vy: 0, angle: 1}
-	goal := NewtNode{x: 9, y: 9, vx: 0, vy: 0, angle: 0}
+	goal := NewtNode{x: 100, y: 100, vx: 0, vy: 0, angle: 0}
 	path := AStar(start, goal)
 	for i, path := range path {
 		fmt.Printf("%d: %s\n", i, path)

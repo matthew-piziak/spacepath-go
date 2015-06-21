@@ -2,6 +2,7 @@ package spacepath
 
 import (
 	"container/heap"
+	"fmt"
 )
 
 type Node interface {
@@ -29,7 +30,10 @@ func AStar(start Node, goal Node) []Action {
 	heap.Push(&openHeap, &Item{node: start, priority: fScore[start]})
 	seen[start] = true
 	for {
-		node := heap.Pop(&openHeap).(*Item).node
+		pop := heap.Pop(&openHeap).(*Item)
+		node := pop.node
+		h := pop.priority
+		fmt.Printf("node: %v h: %f\n", node, h)
 		if node.Success(goal) {
 			return reconstructPath(cameFrom, node)
 		}
