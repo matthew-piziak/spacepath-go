@@ -21,8 +21,6 @@ const (
 	BURN_RIGHT      Action = "burn right"
 )
 
-const ACCELERATION int8 = 2
-
 func (node NewtNode) Neighbors() []Edge {
 	x := node.x + node.vx
 	y := node.y + node.vy
@@ -96,8 +94,8 @@ func (node NewtNode) Neighbors() []Edge {
 func (node NewtNode) Heuristic(goal Node) float64 {
 	newtGoal := goal.(NewtNode)
 	hMax := math.MaxFloat64
-	boundX := (newtGoal.x * 12) / 10
-	boundY := (newtGoal.y * 12) / 10
+	boundX := (newtGoal.x * 11) / 10
+	boundY := (newtGoal.y * 11) / 10
 	if outsideArena(node, boundX, boundY) {
 		return hMax
 	}
@@ -118,10 +116,7 @@ func (node NewtNode) Heuristic(goal Node) float64 {
 }
 
 func heuristic(np float64, nv float64, gp float64, gv float64) float64 {
-	return ((-1 * nv) +
-		(-2 * gv) +
-		math.Sqrt((7*math.Pow(gv, 2))+(2*math.Pow(nv, 2))) +
-		(8 * math.Abs(gp-np))) / 2
+	return ((-1 * nv) + (-2 * gv) + math.Sqrt((7*gv*gv)+(2*nv*nv)+(8*math.Abs(gp-np)))) / 2
 }
 
 func (node NewtNode) Success(goal Node) bool {
@@ -148,8 +143,8 @@ func leavingArena(node NewtNode, boundX int16, boundY int16) bool {
 	brakingTimeY := math.Abs(float64(node.vy)) // acceleration
 	vComponentX := math.Abs(float64(node.vx)) * brakingTimeX
 	vComponentY := math.Abs(float64(node.vy)) * brakingTimeY
-	aComponentX := (float64(ACCELERATION) * brakingTimeX) / 2
-	aComponentY := (float64(ACCELERATION) * brakingTimeY) / 2
+	aComponentX := (2 * brakingTimeX) / 2
+	aComponentY := (2 * brakingTimeY) / 2
 	brakingDistX := vComponentX + aComponentX
 	brakingDistY := vComponentY + aComponentY
 	if node.vx > 0 {
