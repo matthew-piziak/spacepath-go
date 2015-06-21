@@ -2,12 +2,11 @@ package spacepath
 
 import (
 	"math"
-	"testing"
 )
 
 type GridNode struct {
-	x int8
-	y int8
+	x int16
+	y int16
 }
 
 const (
@@ -46,17 +45,4 @@ func (node GridNode) Heuristic(goal Node) float64 {
 
 func (node GridNode) Success(goal Node) bool {
 	return node == goal
-}
-
-func TestAStar(t *testing.T) {
-	start := GridNode{x: 0, y: 0}
-	goal := GridNode{x: 4, y: 4}
-	path := AStar(start, goal)
-	expectedLength := 8
-	if len(path) != expectedLength {
-		t.Errorf(
-			"Expected length %d, was length %d.",
-			expectedLength,
-			len(path))
-	}
 }
