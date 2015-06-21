@@ -96,26 +96,32 @@ func (node NewtNode) Neighbors() []Edge {
 func (node NewtNode) Heuristic(goal Node) float64 {
 	newtGoal := goal.(NewtNode)
 	hMax := math.MaxFloat64
-	boundX := (newtGoal.x * 11) / 10
-	boundY := (newtGoal.y * 11) / 10
+	boundX := (newtGoal.x * 12) / 10
+	boundY := (newtGoal.y * 12) / 10
 	if outsideArena(node, boundX, boundY) {
 		return hMax
 	}
 	if leavingArena(node, boundX, boundY) {
 		return hMax
 	}
-	hx := ((-1 * float64(node.vx)) +
-		(-1 * float64(2*newtGoal.vx)) +
-		math.Sqrt(
-			(7*math.Pow(float64(newtGoal.vx), 2))+
-				(2*math.Pow(float64(node.vx), 2))) +
-		(8 * math.Abs(float64(newtGoal.x-node.x)))) / 2
-	hy := ((-1 * float64(node.vy)) +
-		(-1 * float64(node.vy)) +
-		math.Sqrt((7*math.Pow(float64(newtGoal.vx), 2))+
-			(2*math.Pow(float64(node.vy), 2))) +
-		(8 * math.Abs(float64(newtGoal.y-node.y)))) / 2
+	hx := heuristic(
+		float64(node.x),
+		float64(node.vx),
+		float64(newtGoal.x),
+		float64(newtGoal.vx))
+	hy := heuristic(
+		float64(node.y),
+		float64(node.vy),
+		float64(newtGoal.y),
+		float64(newtGoal.vy))
 	return 1.02 * (hx + hy)
+}
+
+func heuristic(np float64, nv float64, gp float64, gv float64) float64 {
+	return ((-1 * nv) +
+		(-2 * gv) +
+		math.Sqrt((7*math.Pow(gv, 2))+(2*math.Pow(nv, 2))) +
+		(8 * math.Abs(gp-np))) / 2
 }
 
 func (node NewtNode) Success(goal Node) bool {
@@ -124,7 +130,7 @@ func (node NewtNode) Success(goal Node) bool {
 		math.Abs(float64(node.vx-newtGoal.vy))
 	distance := math.Sqrt(math.Pow(float64(newtGoal.x)-float64(node.x), 2) +
 		math.Pow(float64(newtGoal.y)-float64(node.y), 2))
-	return speed == 0 && distance < 6
+	return speed == 0 && distance < 1
 }
 
 func outsideArena(node NewtNode, boundX int16, boundY int16) bool {
