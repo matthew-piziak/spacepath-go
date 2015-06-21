@@ -1,4 +1,4 @@
-package spacepath
+package spacepathgo
 
 import (
 	"container/heap"
@@ -13,8 +13,8 @@ type Node interface {
 type Action string
 
 type Edge struct {
-	dest   Node
-	action Action
+	Dest   Node
+	Action Action
 	score  float64
 }
 
@@ -35,8 +35,8 @@ func AStar(start Node, goal Node) []Edge {
 			return reconstructPath(cameFrom, node)
 		}
 		for _, edge := range node.Neighbors() {
-			adj := edge.dest
-			action := edge.action
+			adj := edge.Dest
+			action := edge.Action
 			if seen[adj] {
 				continue
 			}
@@ -48,8 +48,8 @@ func AStar(start Node, goal Node) []Edge {
 			heap.Push(&openHeap, &Item{node: adj, priority: fScore[adj]})
 			// reverse the edge for reconstruction
 			cameFrom[adj] = Edge{
-				dest:   node,
-				action: action,
+				Dest:   node,
+				Action: action,
 				score:  fScore[adj],
 			}
 		}
@@ -58,7 +58,7 @@ func AStar(start Node, goal Node) []Edge {
 
 func reconstructPath(cameFrom map[Node]Edge, node Node) []Edge {
 	if edge, ok := cameFrom[node]; ok {
-		return append(reconstructPath(cameFrom, edge.dest), edge)
+		return append(reconstructPath(cameFrom, edge.Dest), edge)
 	}
 	return make([]Edge, 0)
 }

@@ -1,4 +1,4 @@
-package spacepath
+package spacepathgo
 
 import (
 	"math"
@@ -20,20 +20,20 @@ const (
 func (node GridNode) Neighbors() []Edge {
 	return []Edge{
 		Edge{
-			dest:   GridNode{x: node.x + 1, y: node.y},
-			action: "right",
+			Dest:   GridNode{x: node.x + 1, y: node.y},
+			Action: "right",
 		},
 		Edge{
-			dest:   GridNode{x: node.x - 1, y: node.y},
-			action: "left",
+			Dest:   GridNode{x: node.x - 1, y: node.y},
+			Action: "left",
 		},
 		Edge{
-			dest:   GridNode{x: node.x, y: node.y + 1},
-			action: "up",
+			Dest:   GridNode{x: node.x, y: node.y + 1},
+			Action: "up",
 		},
 		Edge{
-			dest:   GridNode{x: node.x, y: node.y - 1},
-			action: "down",
+			Dest:   GridNode{x: node.x, y: node.y - 1},
+			Action: "down",
 		}}
 }
 

@@ -1,4 +1,4 @@
-package spacepath
+package spacepathgo
 
 import (
 	"fmt"

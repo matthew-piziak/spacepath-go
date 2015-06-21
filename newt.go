@@ -1,15 +1,15 @@
-package spacepath
+package spacepathgo
 
 import (
 	"math"
 )
 
 type NewtNode struct {
-	x     int16
-	y     int16
-	vx    int16
-	vy    int16
-	angle int8
+	X     int
+	Y     int
+	VX    int
+	VY    int
+	Angle int
 }
 
 const (
@@ -22,97 +22,84 @@ const (
 )
 
 func (node NewtNode) Neighbors() []Edge {
-	x := node.x + node.vx
-	y := node.y + node.vy
-	vx := node.vx
-	vy := node.vy
-	angle := node.angle
-	sin := map[int8]int16{0: 0, 1: 1, 2: 1, 3: 1, 4: 0, 5: -1, 6: -1, 7: -1}
-	cos := map[int8]int16{0: 1, 1: 1, 2: 0, 3: -1, 4: -1, 5: -1, 6: 0, 7: 1}
-	Δvx := cos[angle]
-	Δvy := sin[angle]
+	X := node.X + node.VX
+	Y := node.Y + node.VY
+	VX := node.VX
+	VY := node.VY
+	angle := node.Angle
+	sin := map[int]int{0: 0, 1: 1, 2: 1, 3: 1, 4: 0, 5: -1, 6: -1, 7: -1}
+	cos := map[int]int{0: 1, 1: 1, 2: 0, 3: -1, 4: -1, 5: -1, 6: 0, 7: 1}
+	ΔVX := cos[angle]
+	ΔVY := sin[angle]
 	left_angle := (angle - 1) % 8
 	right_angle := (angle + 1) % 8
 	return []Edge{
 		Edge{
-			dest:   NewtNode{x: x, y: y, vx: vx, vy: vy, angle: angle},
-			action: "cruise straight",
+			Dest:   NewtNode{X: X, Y: Y, VX: VX, VY: VY, Angle: angle},
+			Action: "cruise straight",
 		},
 		Edge{
-			dest: NewtNode{
-				x:     x,
-				y:     y,
-				vx:    vx,
-				vy:    vy,
-				angle: left_angle,
-			},
-			action: "cruise left",
+			Dest:   NewtNode{X: X, Y: Y, VX: VX, VY: VY, Angle: left_angle},
+			Action: "Cruise left",
 		},
 		Edge{
-			dest: NewtNode{
-				x:     x,
-				y:     y,
-				vx:    vx,
-				vy:    vy,
-				angle: right_angle,
-			},
-			action: "cruise right",
+			Dest:   NewtNode{X: X, Y: Y, VX: VX, VY: VY, Angle: right_angle},
+			Action: "Cruise right",
 		},
 		Edge{
-			dest: NewtNode{
-				x:     x,
-				y:     y,
-				vx:    vx + Δvx,
-				vy:    vy + Δvy,
-				angle: angle,
+			Dest: NewtNode{
+				X:     X,
+				Y:     Y,
+				VX:    VX + ΔVX,
+				VY:    VY + ΔVY,
+				Angle: angle,
 			},
-			action: "burn straight",
+			Action: "burn straight",
 		},
 		Edge{
-			dest: NewtNode{
-				x:     x,
-				y:     y,
-				vx:    vx + Δvx,
-				vy:    vy + Δvy,
-				angle: left_angle,
+			Dest: NewtNode{
+				X:     X,
+				Y:     Y,
+				VX:    VX + ΔVX,
+				VY:    VY + ΔVY,
+				Angle: left_angle,
 			},
-			action: "burn left",
+			Action: "burn left",
 		},
 		Edge{
-			dest: NewtNode{
-				x:     x,
-				y:     y,
-				vx:    vx + Δvx,
-				vy:    vy + Δvy,
-				angle: right_angle,
-			},
-			action: "burn right",
+			Dest: NewtNode{
+				X:     X,
+				Y:     Y,
+				VX:    VX + ΔVX,
+				VY:    VY + ΔVY,
+				Angle: right_angle},
+			Action: "burn right",
 		},
 	}
 }
 
 func (node NewtNode) Heuristic(goal Node) float64 {
 	newtGoal := goal.(NewtNode)
-	hMax := math.MaxFloat64
-	boundX := (newtGoal.x * 11) / 10
-	boundY := (newtGoal.y * 11) / 10
+	hMaX := math.MaxFloat64
+	boundX := (newtGoal.X * 11) / 10
+	boundY := (newtGoal.Y * 11) / 10
 	if outsideArena(node, boundX, boundY) {
-		return hMax
+		return hMaX
 	}
 	if leavingArena(node, boundX, boundY) {
-		return hMax
+		return hMaX
 	}
-	hx := heuristic(
-		float64(node.x),
-		float64(node.vx),
-		float64(newtGoal.x),
-		float64(newtGoal.vx))
-	hy := heuristic(
-		float64(node.y),
-		float64(node.vy),
-		float64(newtGoal.y),
-		float64(newtGoal.vy))
-	return 1.02 * (hx + hy)
+	hX := heuristic(
+		float64(node.X),
+		float64(node.VX),
+		float64(newtGoal.X),
+		float64(newtGoal.VX))
+	hY := heuristic(
+		float64(node.Y),
+		float64(node.VY),
+		float64(newtGoal.Y),
+		float64(newtGoal.VY))
+	return 1.02 * (hX + hY)
 }
 
 func heuristic(np float64, nv float64, gp float64, gv float64) float64 {
@@ -121,49 +108,49 @@ func heuristic(np float64, nv float64, gp float64, gv float64) float64 {
 
 func (node NewtNode) Success(goal Node) bool {
 	newtGoal := goal.(NewtNode)
-	speed := math.Abs(float64(node.vx-newtGoal.vx)) +
-		math.Abs(float64(node.vx-newtGoal.vy))
-	distance := math.Sqrt(math.Pow(float64(newtGoal.x)-float64(node.x), 2) +
-		math.Pow(float64(newtGoal.y)-float64(node.y), 2))
+	speed := math.Abs(float64(node.VX-newtGoal.VX)) +
+		math.Abs(float64(node.VX-newtGoal.VY))
+	distance := math.Sqrt(math.Pow(float64(newtGoal.X)-float64(node.X), 2) +
+		math.Pow(float64(newtGoal.Y)-float64(node.Y), 2))
 	return speed == 0 && distance < 1
 }
 
-func outsideArena(node NewtNode, boundX int16, boundY int16) bool {
-	if node.x < 0 || node.y < 0 {
+func outsideArena(node NewtNode, boundX int, boundY int) bool {
+	if node.X < 0 || node.Y < 0 {
 		return true
 	}
-	if node.x > boundX || node.y > boundY {
+	if node.X > boundX || node.Y > boundY {
 		return true
 	}
 	return false
 }
 
-func leavingArena(node NewtNode, boundX int16, boundY int16) bool {
-	brakingTimeX := math.Abs(float64(node.vx)) // acceleration
-	brakingTimeY := math.Abs(float64(node.vy)) // acceleration
-	vComponentX := math.Abs(float64(node.vx)) * brakingTimeX
-	vComponentY := math.Abs(float64(node.vy)) * brakingTimeY
+func leavingArena(node NewtNode, boundX int, boundY int) bool {
+	brakingTimeX := math.Abs(float64(node.VX)) // acceleration
+	brakingTimeY := math.Abs(float64(node.VY)) // acceleration
+	vComponentX := math.Abs(float64(node.VX)) * brakingTimeX
+	vComponentY := math.Abs(float64(node.VY)) * brakingTimeY
 	aComponentX := (2 * brakingTimeX) / 2
 	aComponentY := (2 * brakingTimeY) / 2
 	brakingDistX := vComponentX + aComponentX
 	brakingDistY := vComponentY + aComponentY
-	if node.vx > 0 {
-		if brakingDistX > float64(boundX-node.x) {
+	if node.VX > 0 {
+		if brakingDistX > float64(boundX-node.X) {
 			return true
 		}
 	}
-	if node.vy > 0 {
-		if brakingDistY > float64(boundY-node.y) {
+	if node.VY > 0 {
+		if brakingDistY > float64(boundY-node.Y) {
 			return true
 		}
 	}
-	if node.vx < -1 {
-		if brakingDistX > float64(node.x) {
+	if node.VX < -1 {
+		if brakingDistX > float64(node.X) {
 			return true
 		}
 	}
-	if node.vy < -1 {
-		if brakingDistY > float64(node.y) {
+	if node.VY < -1 {
+		if brakingDistY > float64(node.Y) {
 			return true
 		}
 	}

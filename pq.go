@@ -1,5 +1,4 @@
-// Priority queue
-package spacepath
+package spacepathgo
 
 type Item struct {
 	node     Node
