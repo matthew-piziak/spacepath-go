@@ -6,8 +6,8 @@ import (
 )
 
 func TestGrid(t *testing.T) {
-	start := GridNode{x: 0, y: 0}
-	goal := GridNode{x: 64, y: 64}
+	start := GridNode{X: 0, Y: 0}
+	goal := GridNode{X: 64, Y: 64}
 	path := AStar(start, goal)
 	fmt.Printf("path length %d\n", len(path))
 }

@@ -5,8 +5,8 @@ import (
 )
 
 type GridNode struct {
-	x int16
-	y int16
+	X int16
+	Y int16
 }
 
 const (
@@ -20,19 +20,19 @@ const (
 func (node GridNode) Neighbors() []Edge {
 	return []Edge{
 		Edge{
-			Dest:   GridNode{x: node.x + 1, y: node.y},
+			Dest:   GridNode{X: node.X + 1, Y: node.Y},
 			Action: "right",
 		},
 		Edge{
-			Dest:   GridNode{x: node.x - 1, y: node.y},
+			Dest:   GridNode{X: node.X - 1, Y: node.Y},
 			Action: "left",
 		},
 		Edge{
-			Dest:   GridNode{x: node.x, y: node.y + 1},
+			Dest:   GridNode{X: node.X, Y: node.Y + 1},
 			Action: "up",
 		},
 		Edge{
-			Dest:   GridNode{x: node.x, y: node.y - 1},
+			Dest:   GridNode{X: node.X, Y: node.Y - 1},
 			Action: "down",
 		}}
 }
@@ -40,7 +40,7 @@ func (node GridNode) Neighbors() []Edge {
 // euclidean norm
 func (node GridNode) Heuristic(goal Node) float64 {
 	gridGoal := goal.(GridNode)
-	return math.Hypot(float64(gridGoal.x-node.x), float64(gridGoal.y-node.y))
+	return math.Hypot(float64(gridGoal.X-node.X), float64(gridGoal.Y-node.Y))
 }
 
 func (node GridNode) Success(goal Node) bool {
